@@ -1,0 +1,31 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 Auditore
+
+[package]
+name = "husk"
+version = "0.1.0"
+description = "Lightweight service aggregator. No Electron, no bloat."
+authors = ["Édipo Maciel Bento Rosa <contact@gethusk.dev>"]
+license = "Apache-2.0"
+repository = "https://github.com/auditoreie/husk-app"
+edition = "2021"
+rust-version = "1.77"
+
+[lib]
+name = "husk_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = "s"
+panic = "abort"
+strip = true
