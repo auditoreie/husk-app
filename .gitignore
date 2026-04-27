@@ -6,8 +6,12 @@ vite.config.ts.timestamp-*
 vite.config.js.timestamp-*
 
 # Rust / Tauri
+target/
 src-tauri/target/
 src-tauri/gen/schemas/
+
+# CEF binaries (downloaded via scripts/setup-cef.sh)
+vendor/cef/
 
 # Env / secrets
 .env

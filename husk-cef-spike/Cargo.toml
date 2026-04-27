@@ -1,0 +1,21 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 Auditore
+
+[package]
+name = "husk-cef-spike"
+description = "Experimental Husk spike binary backed by CEF (Chromium Embedded Framework)."
+publish = false
+version.workspace = true
+authors.workspace = true
+license.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+repository.workspace = true
+
+[[bin]]
+name = "husk-cef-spike"
+path = "src/main.rs"
+
+[dependencies]
+# CEF bindings will be added in sub-commit 1.2 once the build infra is validated.
+# Keeping the skeleton dep-light so this commit can compile without CEF binaries.

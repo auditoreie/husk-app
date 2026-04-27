@@ -45,6 +45,44 @@ Build a production bundle:
 bun run tauri:build
 ```
 
+## CEF Spike (experimental, macOS arm64)
+
+The Tauri/wry path on macOS uses WKWebView, which on multi-account workloads
+(e.g. two WhatsApp Web sessions) inflates RAM well beyond the project target.
+We are evaluating a hybrid Tauri shell + Chromium Embedded Framework (CEF)
+backend for service webviews. The current commit ships only the build
+skeleton (workspace member, setup script, placeholder binary). Real CEF
+integration lands incrementally over the next commits.
+
+### One-time setup
+
+```bash
+./scripts/setup-cef.sh
+```
+
+The script clones [`tauri-apps/cef-rs`](https://github.com/tauri-apps/cef-rs)
+into a temporary directory, runs its `export-cef-dir` helper, and lands the
+~1.2 GB CEF binaries in `$HOME/.local/share/cef`. Network heavy: budget
+several minutes on a fast link.
+
+After it finishes, set:
+
+```bash
+export CEF_PATH="$HOME/.local/share/cef"
+export DYLD_FRAMEWORK_PATH="$CEF_PATH/Release"
+```
+
+### Build the skeleton
+
+```bash
+cargo check -p husk-cef-spike
+cargo run -p husk-cef-spike
+```
+
+For now the binary just prints a placeholder message; it confirms the
+workspace + Cargo wiring is correct. CEF dependencies and a real browser
+window arrive in sub-commit 1.2.
+
 ## Validation gate (after step 5)
 
 Step 5 of the MVP0 roadmap requires manual verification before continuing

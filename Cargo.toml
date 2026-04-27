@@ -1,0 +1,18 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 Auditore
+
+[workspace]
+resolver = "2"
+members = [
+    "src-tauri",
+    "husk-cef-spike",
+]
+default-members = ["src-tauri"]
+
+[workspace.package]
+version = "0.1.0"
+authors = ["Édipo Maciel Bento Rosa <contact@gethusk.dev>"]
+license = "Apache-2.0"
+edition = "2021"
+rust-version = "1.77"
+repository = "https://github.com/auditoreie/husk-app"

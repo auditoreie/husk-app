@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed (architecture pivot in progress)
+
+- Repo root is now a Cargo workspace; `src-tauri/` remains the default member
+  (Husk shell, unchanged) and a new sibling member `husk-cef-spike/` hosts
+  the experimental CEF backend. `cargo check` / `cargo build` from the root
+  default to `src-tauri` so the existing flow is undisturbed.
+- Added `scripts/setup-cef.sh`: clones `tauri-apps/cef-rs` to a tempdir and
+  runs `export-cef-dir` to land CEF binaries in `$HOME/.local/share/cef`.
+  Network-heavy (~1.2 GB extracted); idempotent unless `FORCE=1` is set.
+- `husk-cef-spike` ships only a placeholder `main()` in this commit. CEF
+  integration lands incrementally — next commit pulls the `cef` crate and
+  opens a browser window.
+
 ### Added
 
 - Initial Tauri 2 + Svelte 5 + TypeScript + Vite scaffold (Bun-managed).
