@@ -45,6 +45,28 @@ Build a production bundle:
 bun run tauri:build
 ```
 
+## Validation gate (after step 5)
+
+Step 5 of the MVP0 roadmap requires manual verification before continuing
+to step 6:
+
+- Cold start the app with the three default services seeded.
+- Log in to **WhatsApp Personal** in the first webview, then to a
+  different account in **WhatsApp Business**.
+- Confirm both stay logged in across a switch (`Cmd/Ctrl+1`,
+  `Cmd/Ctrl+2`) and across a full restart.
+- Measure idle RAM after ~5 min of use and record below.
+
+| Metric | Target | Measured | Date | Tauri |
+| --- | --- | --- | --- | --- |
+| RAM (3 enabled, idle, macOS aarch64) | < 200 MB | _tbd_ | _tbd_ | 2.10 |
+| RAM (3 enabled, idle, Windows x86_64) | < 350 MB | _tbd_ | _tbd_ | 2.10 |
+| RAM (3 enabled, idle, Linux x86_64) | < 300 MB | _tbd_ | _tbd_ | 2.10 |
+| Cold start (macOS aarch64) | < 1.5 s | _tbd_ | _tbd_ | 2.10 |
+
+Compare against Ferdium baseline (~2.8 GB for 3 services).
+If a target is exceeded: stop, investigate, and tune before step 6.
+
 ## Roadmap
 
 MVP0 (current):

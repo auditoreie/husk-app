@@ -28,6 +28,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   All hidden except the initial active one. New `activate_service`
   IPC command swaps visibility and focus. Window resize / scale
   changes relayout all service webviews automatically.
+- Per-service session isolation: each service webview gets its own
+  `data_directory` under `$APP_DATA/sessions/{service_id}`, so two
+  WhatsApp accounts (or any two instances of the same site) hold
+  independent cookies and storage.
+- Default user-agent override (Chrome 120 on Windows) applied to
+  every service webview, with per-service `customUserAgent`
+  overriding it when set.
+- Init script injected at document start spoofs
+  `navigator.webdriver` to `false` to avoid trivial bot detection.
 
 ### Changed
 

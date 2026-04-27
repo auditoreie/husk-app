@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright 2026 Auditore
 
+use std::path::PathBuf;
 use std::sync::Mutex;
 
 use tauri::{
@@ -14,6 +15,21 @@ use crate::domain::Service;
 pub const SHELL_WEBVIEW_LABEL: &str = "main";
 const SIDEBAR_WIDTH: f64 = 52.0;
 const SERVICE_LABEL_PREFIX: &str = "svc-";
+const SESSIONS_DIR: &str = "sessions";
+
+const DEFAULT_USER_AGENT: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 \
+                                  (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
+
+const INIT_SCRIPT: &str = r#"
+;(function() {
+  try {
+    Object.defineProperty(navigator, 'webdriver', {
+      get: () => false,
+      configurable: true,
+    });
+  } catch (_) {}
+})();
+"#;
 
 #[derive(Default)]
 pub struct ServiceWebviews {
@@ -47,6 +63,12 @@ pub enum WebviewError {
     },
     #[error("no webview found for service `{0}`")]
     UnknownService(String),
+    #[error("could not prepare session directory `{path}`: {source}")]
+    SessionDir {
+        path: String,
+        #[source]
+        source: std::io::Error,
+    },
     #[error("tauri runtime error: {0}")]
     Runtime(String),
 }
@@ -59,6 +81,19 @@ impl From<tauri::Error> for WebviewError {
 
 fn label_for(id: &str) -> String {
     format!("{SERVICE_LABEL_PREFIX}{id}")
+}
+
+fn session_dir<R: Runtime>(app: &AppHandle<R>, service_id: &str) -> Result<PathBuf, WebviewError> {
+    let base = app
+        .path()
+        .app_data_dir()
+        .map_err(|e| WebviewError::Runtime(e.to_string()))?;
+    let dir = base.join(SESSIONS_DIR).join(service_id);
+    std::fs::create_dir_all(&dir).map_err(|e| WebviewError::SessionDir {
+        path: dir.display().to_string(),
+        source: e,
+    })?;
+    Ok(dir)
 }
 
 pub fn setup_service_webviews<R: Runtime>(
@@ -79,7 +114,16 @@ pub fn setup_service_webviews<R: Runtime>(
             source: e,
         })?;
         let label = label_for(&service.id);
-        let builder = WebviewBuilder::<R>::new(&label, WebviewUrl::External(parsed));
+        let session = session_dir(app, &service.id)?;
+        let user_agent = service
+            .custom_user_agent
+            .as_deref()
+            .unwrap_or(DEFAULT_USER_AGENT);
+
+        let builder = WebviewBuilder::<R>::new(&label, WebviewUrl::External(parsed))
+            .data_directory(session)
+            .user_agent(user_agent)
+            .initialization_script(INIT_SCRIPT);
         let webview = shell_window.add_child(
             builder,
             LogicalPosition::new(SIDEBAR_WIDTH, 0.0),
