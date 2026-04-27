@@ -4,7 +4,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import Sidebar from "./lib/components/Sidebar.svelte";
-  import { getSettings } from "./lib/ipc";
+  import { activateService, getSettings } from "./lib/ipc";
   import { activeServiceId } from "./lib/stores/activeService";
   import { loadServices, services } from "./lib/stores/services";
 
@@ -25,7 +25,8 @@
         ? enabledSorted.find((s) => s.id === settings.lastActiveServiceId)?.id
         : undefined;
 
-      activeServiceId.set(fromSettings ?? enabledSorted[0]?.id ?? null);
+      const initial = fromSettings ?? enabledSorted[0]?.id ?? null;
+      activeServiceId.set(initial);
     } catch (err) {
       loadError = err instanceof Error ? err.message : String(err);
     } finally {
@@ -33,8 +34,13 @@
     }
   });
 
-  function selectService(id: string) {
+  async function selectService(id: string) {
     activeServiceId.set(id);
+    try {
+      await activateService(id);
+    } catch (err) {
+      console.error("activate_service failed", err);
+    }
   }
 
   let active = $derived(
@@ -57,11 +63,10 @@
     {:else if loading}
       <p class="hint">Loading…</p>
     {:else if active}
-      <header class="active">
+      <header class="active" aria-hidden="true">
         <h1>{active.name}</h1>
         <code>{active.url}</code>
       </header>
-      <p class="hint">Webview will mount here in step 4.</p>
     {:else}
       <div class="empty">
         <h1>No services yet</h1>

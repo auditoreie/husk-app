@@ -1,8 +1,9 @@
 {
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
-  "description": "Default capability for the Husk shell window",
+  "description": "Default capability for the Husk shell webview",
   "windows": ["main"],
+  "webviews": ["main"],
   "permissions": [
     "core:default",
     "store:default"

@@ -2,3 +2,4 @@
 // Copyright 2026 Auditore
 
 pub mod storage;
+pub mod webview;

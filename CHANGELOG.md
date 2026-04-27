@@ -23,3 +23,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Initial active service is restored from `settings.lastActiveServiceId`
   when present, else falls back to the first enabled service by
   `position`.
+- Webview switching: one child webview per enabled service, created
+  on startup as a child of the main window (offset by sidebar width).
+  All hidden except the initial active one. New `activate_service`
+  IPC command swaps visibility and focus. Window resize / scale
+  changes relayout all service webviews automatically.
+
+### Changed
+
+- Default capability now scoped to `webviews: ["main"]` so service
+  webviews cannot reach the IPC handler.
+- `tauri` crate enabled with `unstable` feature for child-webview
+  enumeration via `Manager::webviews()` / `get_webview()`.

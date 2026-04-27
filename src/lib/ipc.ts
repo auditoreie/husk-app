@@ -12,3 +12,7 @@ export async function listServices(): Promise<Service[]> {
 export async function getSettings(): Promise<Settings> {
   return invoke<Settings>("get_settings");
 }
+
+export async function activateService(id: string): Promise<void> {
+  return invoke<void>("activate_service", { id });
+}
