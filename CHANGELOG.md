@@ -29,9 +29,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   IPC command swaps visibility and focus. Window resize / scale
   changes relayout all service webviews automatically.
 - Per-service session isolation: each service webview gets its own
-  `data_directory` under `$APP_DATA/sessions/{service_id}`, so two
-  WhatsApp accounts (or any two instances of the same site) hold
-  independent cookies and storage.
+  `data_directory` under `$APP_DATA/sessions/{service_id}` (used on
+  Windows / Linux) and a `data_store_identifier` derived from the
+  service UUID (used on macOS 14+ / iOS 17+, where WKWebView ignores
+  `data_directory` and the only working primitive is
+  `WKWebsiteDataStore.dataStoreForIdentifier`). Cookies, IndexedDB,
+  and localStorage are now isolated across all three engines.
 - Default user-agent override (Chrome 120 on Windows) applied to
   every service webview, with per-service `customUserAgent`
   overriding it when set.

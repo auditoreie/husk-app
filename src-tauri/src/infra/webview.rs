@@ -119,9 +119,13 @@ pub fn setup_service_webviews<R: Runtime>(
             .custom_user_agent
             .as_deref()
             .unwrap_or(DEFAULT_USER_AGENT);
+        let identifier = uuid::Uuid::parse_str(&service.id)
+            .map(|u| *u.as_bytes())
+            .map_err(|e| WebviewError::Runtime(format!("invalid service uuid: {e}")))?;
 
         let builder = WebviewBuilder::<R>::new(&label, WebviewUrl::External(parsed))
             .data_directory(session)
+            .data_store_identifier(identifier)
             .user_agent(user_agent)
             .initialization_script(INIT_SCRIPT);
         let webview = shell_window.add_child(
