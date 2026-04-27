@@ -17,3 +17,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   for the three default services and default settings.
 - Read-only IPC commands `list_services` and `get_settings`.
 - Matching TypeScript types and typed `ipc.ts` wrapper.
+- Static sidebar (52px) with per-service icons, active indicator, and
+  ghost slots for "add service" and settings; fed by a Svelte
+  `services` store that hydrates from `list_services` on app mount.
+  Initial active service is restored from `settings.lastActiveServiceId`
+  when present, else falls back to the first enabled service by
+  `position`.
